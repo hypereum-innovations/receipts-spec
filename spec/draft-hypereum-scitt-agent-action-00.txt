@@ -1,0 +1,616 @@
+
+
+
+
+SCITT Working Group                                           G. Delillo
+Internet-Draft                                              Hypereum Ltd
+Intended status: Standards Track                         1 November 2026
+Expires: 5 May 2027
+
+
+      SCITT Agent Action Receipts and Transparent Capsule Profile
+                  draft-hypereum-scitt-agent-action-00
+
+Abstract
+
+   This document specifies the Agent Action Capsule profile
+   ("urn:hivemind:receipts:capsule:1") for Supply Chain Integrity,
+   Transparency, and Trust (SCITT) Signed Statements and portable ".hvr"
+   ("application/vnd.hivemind.receipt+cose") bundles.  It defines a
+   deterministic CBOR and JSON Canonicalization Scheme (JCS) dual-digest
+   payload format, COSE_Sign1 envelope profiling, algorithm policy
+   separating transparency service keys from customer issuer keys,
+   privacy-preserving off-log salted commitments with envelope key
+   destruction (crypto-shredding), Merkle inclusion receipts anchored in
+   signed-note checkpoints with a witness cosignature quorum, and long-
+   term archive preservation via Evidence Record Syntax (ERS) with
+   cryptographic timestamps.
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at https://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on 5 May 2027.
+
+Copyright Notice
+
+   Copyright (c) 2026 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+
+
+
+
+
+Delillo                    Expires 5 May 2027                   [Page 1]
+
+Internet-Draft         SCITT Agent Action Receipts         November 2026
+
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents (https://trustee.ietf.org/
+   license-info) in effect on the date of publication of this document.
+   Please review these documents carefully, as they describe your rights
+   and restrictions with respect to this document.  Code Components
+   extracted from this document must include Revised BSD License text as
+   described in Section 4.e of the Trust Legal Provisions and are
+   provided without warranty as described in the Revised BSD License.
+
+Table of Contents
+
+   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
+   2.  Conventions and Terminology . . . . . . . . . . . . . . . . .   3
+   3.  Relationship to Other SCITT Agent Specifications  . . . . . .   3
+     3.1.  Relationship to draft-mih-scitt-agent-action-capsule  . .   3
+     3.2.  Relationship to draft-emirdag-scitt-ai-agent-execution  .   4
+   4.  Agent Action Capsule Format and Invariants  . . . . . . . . .   4
+     4.1.  Binding Protocol Invariants . . . . . . . . . . . . . . .   4
+     4.2.  Dual Canonical Digests (CBOR and JCS) . . . . . . . . . .   5
+   5.  SCITT Envelope, Transparency Log, and Algorithm Profile . . .   5
+     5.1.  COSE_Sign1 Statement and CWT Claims . . . . . . . . . . .   5
+     5.2.  Post-Quantum Countersignatures (ML-DSA-65)  . . . . . . .   5
+     5.3.  RFC 9162 Inclusion Proofs and Witness Quorum  . . . . . .   6
+     5.4.  Long-Term Archive Evidence Records (RFC 4998 and RFC
+           3161) . . . . . . . . . . . . . . . . . . . . . . . . . .   6
+   6.  Selective Disclosure and Privacy Architecture . . . . . . . .   6
+   7.  Normative CDDL Specification  . . . . . . . . . . . . . . . .   6
+   8.  Security Considerations . . . . . . . . . . . . . . . . . . .   8
+   9.  Privacy Considerations  . . . . . . . . . . . . . . . . . . .   8
+   10. IANA Considerations . . . . . . . . . . . . . . . . . . . . .   8
+   11. References  . . . . . . . . . . . . . . . . . . . . . . . . .   9
+     11.1.  Normative References . . . . . . . . . . . . . . . . . .   9
+     11.2.  Informative References . . . . . . . . . . . . . . . . .  10
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  11
+
+1.  Introduction
+
+   Autonomous AI agents invoke tools, Model Context Protocol (MCP)
+   endpoints, Agent-to-Agent (A2A) tasks, and external HTTP APIs on
+   behalf of human and workload principals.  Conventional telemetry logs
+   are mutable, omit denied or failed attempts (survivorship bias),
+   conflate attempted tool calls with confirmed side effects, and leak
+   sensitive personal data or prompt arguments into append-only storage.
+
+
+
+
+
+
+
+
+Delillo                    Expires 5 May 2027                   [Page 2]
+
+Internet-Draft         SCITT Agent Action Receipts         November 2026
+
+
+   This specification profiles the IETF SCITT architecture
+   [I-D.ietf-scitt-architecture] and SCITT Reference APIs (SCRAPI)
+   [I-D.ietf-scitt-scrapi] to provide cryptographically verifiable,
+   offline-auditable receipts for every agent action decision and
+   execution outcome.
+
+2.  Conventions and Terminology
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+   "OPTIONAL" in this document are to be interpreted as described in BCP
+   14 [RFC2119] [RFC8174] when, and only when, they appear in all
+   capitals, as shown here.
+
+3.  Relationship to Other SCITT Agent Specifications
+
+   Two related individual submissions in the SCITT Working Group address
+   adjacent aspects of AI agent transparency.  This section clarifies
+   how "draft-hypereum-scitt-agent-action" complements and extends both
+   specifications.
+
+3.1.  Relationship to draft-mih-scitt-agent-action-capsule
+
+   The individual draft [I-D.mih-scitt-agent-action-capsule] introduces
+   the problem statement and conceptual data model for recording
+   discrete agent actions as SCITT Signed Statements.  This
+   specification builds upon that conceptual framing and provides the
+   normative wire-format and verification rules required for
+   interoperable implementation:
+
+   *  Exact deterministic CBOR [RFC8949] Section 4.2 and JCS [RFC8785]
+      dual canonical digest rules ("capsule_id") with byte-for-byte test
+      vectors;
+
+   *  Four formally verified protocol invariants (Completeness across
+      all six verdict classes, Confirmed Effect Binding, Anchored Ledger
+      Claim verification, and Class-1 Offline Determinism);
+
+   *  A salted HMAC-SHA-256 commitment construction paired with KMS
+      envelope key destruction (crypto-shredding) and optional BBS
+      selective disclosure [RFC9380] so sensitive prompts and arguments
+      never enter the append-only Merkle log;
+
+   *  Binding of [RFC9162] inclusion proofs inside COSE receipts
+      [RFC9942] to C2SP signed-note checkpoints cosigned by a witness
+      quorum.
+
+
+
+
+
+Delillo                    Expires 5 May 2027                   [Page 3]
+
+Internet-Draft         SCITT Agent Action Receipts         November 2026
+
+
+3.2.  Relationship to draft-emirdag-scitt-ai-agent-execution
+
+   The individual draft [I-D.emirdag-scitt-ai-agent-execution] focuses
+   on high-level AI agent execution provenance, model invocation
+   telemetry, and runtime workload identity attestation.  By contrast,
+   this specification operates at the per-action authorization and side-
+   effect boundary:
+
+   *  Whereas [I-D.emirdag-scitt-ai-agent-execution] attests that an
+      agent runtime executed a workflow, this profile records each
+      individual MCP, A2A, HTTP, or tool call together with its policy
+      disposition ("executed", "blocked", "denied", "errored",
+      "engine_failure", or "timed_out") and the cryptographic digest of
+      the observed side effect;
+
+   *  Hardware and runtime attestation evidence defined in
+      [I-D.emirdag-scitt-ai-agent-execution] can be referenced directly
+      inside the "runtime.attestation_ref" and
+      "assurance.attestation_mode" fields of an Agent Action Capsule,
+      allowing implementers to combine runtime execution provenance with
+      per-action SCITT receipts.
+
+4.  Agent Action Capsule Format and Invariants
+
+4.1.  Binding Protocol Invariants
+
+   Every implementation conforming to profile
+   "urn:hivemind:receipts:capsule:1" MUST enforce four binding
+   invariants:
+
+   1.  *No Survivorship Bias (Completeness)*: A signed capsule MUST be
+       emitted for every verdict class: "executed", "blocked", "denied",
+       "errored", "engine_failure", and "timed_out".
+
+   2.  *Confirmed Effect Binding*: A capsule with "effect.status" equal
+       to "confirmed" MUST have "verdict_class" equal to "executed" and
+       MUST carry a non-empty "effect.response_digest" computed over the
+       observed response.
+
+   3.  *Anchored Ledger Claim*: A capsule claiming
+       "assurance.ledger_mode" equal to "anchored" MUST be rejected by
+       verifiers unless accompanied by a verified [RFC9162] inclusion
+       receipt [RFC9942] anchored in a log-signed and witness-quorum-
+       cosigned checkpoint.
+
+   4.  *Offline Class-1 Verification*: Class-1 verification MUST be
+       deterministic and completely offline, consulting no external
+       network, no AI model, and no heuristic wall-clock skew
+
+
+
+Delillo                    Expires 5 May 2027                   [Page 4]
+
+Internet-Draft         SCITT Agent Action Receipts         November 2026
+
+
+       assumptions.  Each verification run MUST bind its deterministic
+       run identifier to the verifier build digest, statement bytes,
+       checkpoint text, and canonical trust roots.
+
+4.2.  Dual Canonical Digests (CBOR and JCS)
+
+   The canonical identifier "capsule_id" MUST be computed as
+   "sha256:<hex>" over the [RFC8949] Section 4.2 Core Deterministic
+   Encoding CBOR bytes of the CapsuleCore map (excluding "capsule_id").
+   Implementations SHOULD also compute a JSON canonical digest as
+   "sha256:<hex>" over the UTF-8 bytes of the [RFC8785] JSON
+   Canonicalization Scheme (JCS) serialization of the CapsuleCore
+   object.
+
+5.  SCITT Envelope, Transparency Log, and Algorithm Profile
+
+5.1.  COSE_Sign1 Statement and CWT Claims
+
+   An Agent Action Capsule is carried as the payload of a tagged
+   COSE_Sign1 (CBOR Tag 18, [RFC9052]) envelope:
+
+   *  Protected header parameter 1 ("alg"): keys operated by the
+      Transparency Service operator (log checkpoint and receipt keys,
+      and operator-hosted statement issuer keys) MUST use EdDSA (-8).
+      Statements submitted by external customer issuers MAY use EdDSA
+      (-8), ES256 (-7), or ES384 (-35) when registered in the verifier's
+      trust store.
+
+   *  Protected header parameter 3 ("content_type") MUST be
+      "application/vnd.hivemind.agent-action-capsule+cbor" (or
+      "application/vnd.hivemind.receipt+cose" at the bundle transport
+      layer).
+
+   *  Protected header parameter 4 ("kid") MUST identify the issuer key,
+      RECOMMENDED to be the base64url-encoded [RFC9679] COSE Key
+      Thumbprint.
+
+   *  Protected header parameter 15 ("cwt_claims", [RFC9597]) SHOULD
+      carry CWT claims 1 ("iss"), 2 ("sub"), and 6 ("iat").
+
+5.2.  Post-Quantum Countersignatures (ML-DSA-65)
+
+   Statements MAY carry a post-quantum ML-DSA-65 [FIPS204] [RFC9964]
+   countersignature in unprotected header parameter 7 (or -25900) using
+   algorithm -49 when enabled by relying-party policy.
+
+
+
+
+
+
+Delillo                    Expires 5 May 2027                   [Page 5]
+
+Internet-Draft         SCITT Agent Action Receipts         November 2026
+
+
+5.3.  RFC 9162 Inclusion Proofs and Witness Quorum
+
+   Transparency log receipts ("application/scitt-receipt+cose") are
+   attached in unprotected header parameter 394 ("receipts") per
+   [RFC9942], with protected parameter 395 ("vds" = 1 for [RFC9162]
+   SHA-256 Merkle trees) and unprotected parameter 396 ("vdp" containing
+   the bstr-wrapped CBOR inclusion proof "[tree_size, leaf_index, [*
+   sha256_hash]]").  Checkpoints MUST be verified against both the log's
+   Ed25519 note key (type 0x01) and a configured witness cosignature
+   quorum (type 0x04).
+
+5.4.  Long-Term Archive Evidence Records (RFC 4998 and RFC 3161)
+
+   Archives requiring multi-year non-repudiation across cryptographic
+   algorithm transitions MAY encapsulate checkpoint or batch Merkle
+   roots inside ASN.1 DER EvidenceRecord structures [RFC4998] stamped
+   with [RFC3161] CMS TimeStampTokens.
+
+6.  Selective Disclosure and Privacy Architecture
+
+   Sensitive fields ("principal.subject", "operation.target", "request",
+   "response", "effect.summary") MUST NOT appear in cleartext in a
+   logged capsule.  Each field enters the capsule as "HMAC-SHA-
+   256(salt_32, field_name || 0x00 || det_cbor(value))" where
+   "privacy.salt_commitment = sha256(salt_32)".  When a holder must
+   disclose a subset of attributes without cross-presentation
+   correlation, issuers MAY accompany the capsule with a BBS proof over
+   BLS12-381 [RFC9380].
+
+7.  Normative CDDL Specification
+
+   The following Concise Data Definition Language (CDDL) [RFC8610]
+   grammar defines the deterministic CBOR structure of an Agent Action
+   Capsule:
+
+   sha256-digest = tstr .regexp "^sha256:[0-9a-f]{64}$"
+   ulid-str      = tstr .regexp "^[0-9A-HJKMNP-TV-Z]{26}$"
+
+   verdict-class = "executed" / "blocked" / "denied"
+                 / "errored" / "engine_failure" / "timed_out"
+
+   risk-tier     = "read" / "write" / "destructive"
+                 / "financial" / "external_communication"
+
+   ledger-mode   = "standalone" / "chained" / "anchored"
+   attest-mode   = "none" / "nitro" / "sev-snp" / "tdx" / "gpu"
+
+   agent-action-capsule = {
+
+
+
+Delillo                    Expires 5 May 2027                   [Page 6]
+
+Internet-Draft         SCITT Agent Action Receipts         November 2026
+
+
+     profile: "urn:hivemind:receipts:capsule:1",
+     capsule_id: sha256-digest,
+     action_id: ulid-str,
+     ? retry_of: ulid-str,
+     agent: {
+       ? spiffe_id: tstr,
+       ? agent_card_digest: sha256-digest,
+       ? key_thumbprint: tstr,
+     },
+     principal: {
+       subject_commitment: sha256-digest,
+       ? delegation_chain_digest: sha256-digest,
+       ? token_issuer: tstr,
+       ? token_scopes: [* tstr],
+     },
+     operation: {
+       kind: "mcp" / "a2a" / "http" / "tool" / "other",
+       method: tstr,
+       ? target_commitment: sha256-digest,
+       ? tool_schema_digest: sha256-digest,
+       risk_tier: risk-tier,
+     },
+     request_digest: sha256-digest,
+     verdict_class: verdict-class,
+     ? effect: {
+       status: "confirmed" / "asserted" / "none",
+       ? response_digest: sha256-digest,
+       ? summary_commitment: sha256-digest,
+     },
+     disposition: {
+       ? authority: tstr,
+       ? decision_digest: sha256-digest,
+       ? approval_digest: sha256-digest,
+       ? break_glass: bool,
+     },
+     ? criteria_ref: sha256-digest,
+     ? model: {
+       ? provider: tstr,
+       ? model_id: tstr,
+       ? model_version: tstr,
+       ? region: tstr,
+       ? provider_request_id: tstr,
+     },
+     ? runtime: {
+       ? image_digest: sha256-digest,
+       ? attestation_ref: tstr,
+     },
+     causality: {
+
+
+
+Delillo                    Expires 5 May 2027                   [Page 7]
+
+Internet-Draft         SCITT Agent Action Receipts         November 2026
+
+
+       ? parent_capsule_ids: [* sha256-digest],
+       ? dag_root: sha256-digest,
+       ? trace_id: tstr,
+       ? span_id: tstr,
+       ? a2a_task_id: tstr,
+       ? mcp_request_id: tstr,
+     },
+     assurance: {
+       ledger_mode: ledger-mode,
+       attestation_mode: attest-mode,
+     },
+     privacy: {
+       disclosure_policy_id: tstr,
+       salt_commitment: sha256-digest,
+     },
+     issued_at: tstr,
+     ? extensions: { * tstr => any },
+   }
+
+8.  Security Considerations
+
+   Enforcing a witness cosignature quorum with intersection at least one
+   honest witness prevents undetected split-view equivocation by the
+   Transparency Service.  Separating the KMS signing key of the
+   Transparency Service from the KMS signing key of the statement issuer
+   ensures that compromise of an issuer role cannot forge log inclusion
+   receipts or checkpoints, and vice versa.  All verifiers MUST reject
+   non-deterministic CBOR encodings (indefinite lengths, duplicate or
+   unsorted map keys, or invalid UTF-8 text strings) before evaluating
+   cryptographic signatures.
+
+9.  Privacy Considerations
+
+   Storing only 256-bit salted HMAC commitments on the Merkle log
+   prevents dictionary and rainbow-table attacks on low-entropy
+   attributes.  Wrapping the off-log 32-byte salt under a per-subject or
+   per-workspace Data Encryption Key (DEK) enables erasure by key
+   destruction (crypto-shredding) without invalidating the Merkle tree.
+   Public transparency logs MUST NOT record customer workspace
+   identifiers, user email addresses, agent names, or tool arguments.
+
+10.  IANA Considerations
+
+   IANA is requested to register the media types "application/
+   vnd.hivemind.receipt+cose" (file extension ".hvr") and "application/
+   vnd.hivemind.agent-action-capsule+cbor" in the "Media Types"
+   registry.
+
+
+
+
+Delillo                    Expires 5 May 2027                   [Page 8]
+
+Internet-Draft         SCITT Agent Action Receipts         November 2026
+
+
+11.  References
+
+11.1.  Normative References
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119, March 1997,
+              <https://www.rfc-editor.org/info/rfc2119>.
+
+   [RFC3161]  Adams, C., Cain, P., Pinkas, D., and R. Zuccherato,
+              "Internet X.509 Public Key Infrastructure Time-Stamp
+              Protocol (TSP)", RFC 3161, August 2001,
+              <https://www.rfc-editor.org/info/rfc3161>.
+
+   [RFC4998]  Gondrom, T., Brandner, R., and U. Pordesch, "Evidence
+              Record Syntax (ERS)", RFC 4998, August 2007,
+              <https://www.rfc-editor.org/info/rfc4998>.
+
+   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
+              2119 Key Words", BCP 14, RFC 8174, May 2017,
+              <https://www.rfc-editor.org/info/rfc8174>.
+
+   [RFC8610]  Birkholz, H., Vigano, C., and C. Bormann, "Concise Data
+              Definition Language (CDDL): A Notational Convention to
+              Express Concise Binary Object Representation (CBOR) and
+              JSON Data Structures", RFC 8610, June 2019,
+              <https://www.rfc-editor.org/info/rfc8610>.
+
+   [RFC8949]  Bormann, C. and P. Hoffman, "Concise Binary Object
+              Representation (CBOR)", STD 94, RFC 8949, December 2020,
+              <https://www.rfc-editor.org/info/rfc8949>.
+
+   [RFC9052]  Schaad, J., "CBOR Object Signing and Encryption (COSE):
+              Structures and Process", STD 96, RFC 9052, August 2022,
+              <https://www.rfc-editor.org/info/rfc9052>.
+
+   [RFC9597]  Looker, M. and M. Jones, "CBOR Web Token (CWT) Claims in
+              COSE Headers", RFC 9597, June 2024,
+              <https://www.rfc-editor.org/info/rfc9597>.
+
+   [RFC9679]  Isobe, K., Tschofenig, H., and O. Steele, "CBOR Object
+              Signing and Encryption (COSE) Key Thumbprint", RFC 9679,
+              December 2024, <https://www.rfc-editor.org/info/rfc9679>.
+
+   [RFC9942]  Birkholz, H. and O. Steele, "COSE Receipts for Verifiable
+              Data Structures", RFC 9942, January 2026,
+              <https://www.rfc-editor.org/info/rfc9942>.
+
+
+
+
+
+Delillo                    Expires 5 May 2027                   [Page 9]
+
+Internet-Draft         SCITT Agent Action Receipts         November 2026
+
+
+   [RFC9964]  Housley, R., "Use of ML-DSA in CBOR Object Signing and
+              Encryption (COSE)", RFC 9964, February 2026,
+              <https://www.rfc-editor.org/info/rfc9964>.
+
+11.2.  Informative References
+
+   [FIPS204]  National Institute of Standards and Technology, "Module-
+              Lattice-Based Digital Signature Standard (ML-DSA)",
+              FIPS PUB 204, August 2024,
+              <https://doi.org/10.6028/NIST.FIPS.204>.
+
+   [I-D.emirdag-scitt-ai-agent-execution]
+              Emirdag, E., "Verifiable AI Agent Execution Provenance
+              with SCITT", Work in Progress, Internet-Draft, draft-
+              emirdag-scitt-ai-agent-execution-01, October 2026,
+              <https://datatracker.ietf.org/doc/html/draft-emirdag-
+              scitt-ai-agent-execution>.
+
+   [I-D.ietf-scitt-architecture]
+              Birkholz, H., Delignat-Lavaud, A., and C. Fournet, "An
+              Architecture for Trustworthy and Transparent Digital
+              Supply Chains", Work in Progress, Internet-Draft, draft-
+              ietf-scitt-architecture-22, March 2026,
+              <https://datatracker.ietf.org/doc/html/draft-ietf-scitt-
+              architecture>.
+
+   [I-D.ietf-scitt-scrapi]
+              Richards, J., "SCITT Reference APIs", Work in Progress,
+              Internet-Draft, draft-ietf-scitt-scrapi-11, October 2026,
+              <https://datatracker.ietf.org/doc/html/draft-ietf-scitt-
+              scrapi>.
+
+   [I-D.mih-scitt-agent-action-capsule]
+              Mih, M., "SCITT Agent Action Capsule", Work in Progress,
+              Internet-Draft, draft-mih-scitt-agent-action-capsule-05,
+              October 2026, <https://datatracker.ietf.org/doc/html/
+              draft-mih-scitt-agent-action-capsule>.
+
+   [RFC8785]  Rundgren, A., Jordan, B., and S. Erdtman, "JSON
+              Canonicalization Scheme (JCS)", RFC 8785, June 2020,
+              <https://www.rfc-editor.org/info/rfc8785>.
+
+   [RFC9162]  Laurie, B., Messeri, E., and R. Stradling, "Certificate
+              Transparency Version 2.0", RFC 9162, December 2021,
+              <https://www.rfc-editor.org/info/rfc9162>.
+
+
+
+
+
+
+Delillo                    Expires 5 May 2027                  [Page 10]
+
+Internet-Draft         SCITT Agent Action Receipts         November 2026
+
+
+   [RFC9380]  Faz-Hernandez, A., Scott, S., Sullivan, N., Wahby, R. S.,
+              and C. A. Wood, "Hashing to Elliptic Curves", RFC 9380,
+              August 2023, <https://www.rfc-editor.org/info/rfc9380>.
+
+Author's Address
+
+   Giovanni Delillo
+   Hypereum Ltd
+   71-75 Shelton Street, Covent Garden
+   London
+   WC2H 9JQ
+   United Kingdom
+   Email: security@hypereum.tech
+   URI:   https://receipts.hivemindax.com
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Delillo                    Expires 5 May 2027                  [Page 11]

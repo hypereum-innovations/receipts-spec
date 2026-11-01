@@ -1,0 +1,50 @@
+TLC2 Version 2026.10.30.154139 (rev: 090e85c)
+Running breadth-first search Model-Checking with fp 14 and seed -3927696726220873452 with 1 worker on 32 cores with 13840MB heap and 64MB offheap memory [pid: 3053197] (Linux 7.0.0-38-generic amd64, Eclipse Adoptium 21.0.13 64bit, MSBDiskFPSet, DiskStateQueue).
+Parsing file /home/giovi/Code/Hivemind/docs/receipts/mutants/Mutant_INV_ConfirmedEffectHasObservedDigest.tla
+Parsing file /tmp/tlc-18402560097766571922/Naturals.tla (jar:file:/tmp/tla2tools.jar!/tla2sany/StandardModules/Naturals.tla)
+Parsing file /tmp/tlc-18402560097766571922/Sequences.tla (jar:file:/tmp/tla2tools.jar!/tla2sany/StandardModules/Sequences.tla)
+Parsing file /tmp/tlc-18402560097766571922/FiniteSets.tla (jar:file:/tmp/tla2tools.jar!/tla2sany/StandardModules/FiniteSets.tla)
+Parsing file /tmp/tlc-18402560097766571922/TLC.tla (jar:file:/tmp/tla2tools.jar!/tla2sany/StandardModules/TLC.tla)
+Parsing file /tmp/tlc-18402560097766571922/_TLCTrace.tla (jar:file:/tmp/tla2tools.jar!/tla2sany/StandardModules/_TLCTrace.tla)
+Parsing file /tmp/tlc-18402560097766571922/TLCExt.tla (jar:file:/tmp/tla2tools.jar!/tla2sany/StandardModules/TLCExt.tla)
+Parsing file /tmp/tlc-18402560097766571922/Integers.tla (jar:file:/tmp/tla2tools.jar!/tla2sany/StandardModules/Integers.tla)
+Semantic processing of module Naturals
+Semantic processing of module Sequences
+Semantic processing of module FiniteSets
+Semantic processing of module TLC
+Semantic processing of module Integers
+Semantic processing of module TLCExt
+Semantic processing of module _TLCTrace
+Semantic processing of module Mutant_INV_ConfirmedEffectHasObservedDigest
+Linting of module TLCExt
+Linting of module _TLCTrace
+Linting of module Mutant_INV_ConfirmedEffectHasObservedDigest
+Starting... (2026-10-31 22:20:58)
+Computing initial states...
+Finished computing initial states: 1 distinct state generated at 2026-10-31 22:20:58.
+Error: Invariant INV_ConfirmedEffectHasObservedDigest is violated.
+Error: The behavior up to this point is:
+State 1: <Initial predicate>
+/\ checkpoints = {}
+/\ logEntries = {}
+/\ statements = {}
+/\ witnessCosigs = {}
+/\ verifiedBundles = {}
+/\ capsules = {}
+
+State 2: <IssueCapsule("c1","executed","confirmed",FALSE,"standalone",FALSE) line 61, col 3 to line 72, col 77 of module Mutant_INV_ConfirmedEffectHasObservedDigest>
+/\ checkpoints = {}
+/\ logEntries = {}
+/\ statements = {[cid |-> "c1", signedByTrustedIssuer |-> FALSE]}
+/\ witnessCosigs = {}
+/\ verifiedBundles = {}
+/\ capsules = { [ verdict |-> "executed",
+    effectStatus |-> "confirmed",
+    hasRespDigest |-> FALSE,
+    cid |-> "c1",
+    ledgerMode |-> "standalone" ] }
+
+2 states generated, 2 distinct states found, 0 states left on queue.
+The depth of the complete state graph search is 2.
+Finished in 00s at (2026-10-31 22:20:59)
+Trace exploration spec path: docs/receipts/mutants/Mutant_INV_ConfirmedEffectHasObservedDigest_TTrace_1793481658.tla

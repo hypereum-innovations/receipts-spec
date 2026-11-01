@@ -1,0 +1,11 @@
+{
+  "name": "@hypereum/receipts-spec",
+  "version": "0.1.0",
+  "description": "IETF SCITT Agent Action Capsule specification, IANA .hvr media type template, CDDL schemas, TLA+ formal specification, and conformance test vectors.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "scripts": {
+    "build": "node --test test/smoke.test.mjs",
+    "test": "node --test test/smoke.test.mjs"
+  }
+}

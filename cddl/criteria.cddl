@@ -1,0 +1,6 @@
+; Outcome criteria (CEL program accepted by both parties)
+criteria = {
+  profile: "urn:hivemind:receipts:criteria:1",
+  program: tstr, ? template_id: tstr, ? description: tstr,
+}
+digest = tstr .regexp "sha256:[0-9a-f]{64}"

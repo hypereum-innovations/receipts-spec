@@ -1,0 +1,125 @@
+TLC2 Version 2026.10.30.154139 (rev: 090e85c)
+Running breadth-first search Model-Checking with fp 95 and seed -6106226271485713732 with 1 worker on 32 cores with 13840MB heap and 64MB offheap memory [pid: 3052950] (Linux 7.0.0-38-generic amd64, Eclipse Adoptium 21.0.13 64bit, MSBDiskFPSet, DiskStateQueue).
+Parsing file /home/giovi/Code/Hivemind/docs/receipts/mutants/Mutant_INV_NoSplitViewWithWitnessQuorum.tla
+Parsing file /tmp/tlc-11153812366446570643/Naturals.tla (jar:file:/tmp/tla2tools.jar!/tla2sany/StandardModules/Naturals.tla)
+Parsing file /tmp/tlc-11153812366446570643/Sequences.tla (jar:file:/tmp/tla2tools.jar!/tla2sany/StandardModules/Sequences.tla)
+Parsing file /tmp/tlc-11153812366446570643/FiniteSets.tla (jar:file:/tmp/tla2tools.jar!/tla2sany/StandardModules/FiniteSets.tla)
+Parsing file /tmp/tlc-11153812366446570643/TLC.tla (jar:file:/tmp/tla2tools.jar!/tla2sany/StandardModules/TLC.tla)
+Parsing file /tmp/tlc-11153812366446570643/_TLCTrace.tla (jar:file:/tmp/tla2tools.jar!/tla2sany/StandardModules/_TLCTrace.tla)
+Parsing file /tmp/tlc-11153812366446570643/TLCExt.tla (jar:file:/tmp/tla2tools.jar!/tla2sany/StandardModules/TLCExt.tla)
+Parsing file /tmp/tlc-11153812366446570643/Integers.tla (jar:file:/tmp/tla2tools.jar!/tla2sany/StandardModules/Integers.tla)
+Semantic processing of module Naturals
+Semantic processing of module Sequences
+Semantic processing of module FiniteSets
+Semantic processing of module TLC
+Semantic processing of module Integers
+Semantic processing of module TLCExt
+Semantic processing of module _TLCTrace
+Semantic processing of module Mutant_INV_NoSplitViewWithWitnessQuorum
+Linting of module TLCExt
+Linting of module _TLCTrace
+Linting of module Mutant_INV_NoSplitViewWithWitnessQuorum
+Starting... (2026-10-31 22:20:50)
+Computing initial states...
+Finished computing initial states: 1 distinct state generated at 2026-10-31 22:20:50.
+Progress(8) at 2026-10-31 22:20:53: 552,422 states generated (552,422 s/min), 91,227 distinct states found (91,227 ds/min), 45,657 states left on queue.
+Error: Invariant INV_NoSplitViewWithWitnessQuorum is violated.
+Error: The behavior up to this point is:
+State 1: <Initial predicate>
+/\ checkpoints = {}
+/\ logEntries = {}
+/\ statements = {}
+/\ witnessCosigs = {}
+/\ verifiedBundles = {}
+/\ capsules = {}
+
+State 2: <AdversaryPublishConflictingCheckpoint(1,"root_A") line 83, col 3 to line 84, col 83 of module Mutant_INV_NoSplitViewWithWitnessQuorum>
+/\ checkpoints = {[treeSize |-> 1, root |-> "root_A", logSigned |-> TRUE]}
+/\ logEntries = {}
+/\ statements = {}
+/\ witnessCosigs = {}
+/\ verifiedBundles = {}
+/\ capsules = {}
+
+State 3: <AdversaryPublishConflictingCheckpoint(1,"root_B") line 83, col 3 to line 84, col 83 of module Mutant_INV_NoSplitViewWithWitnessQuorum>
+/\ checkpoints = { [treeSize |-> 1, root |-> "root_A", logSigned |-> TRUE],
+  [treeSize |-> 1, root |-> "root_B", logSigned |-> TRUE] }
+/\ logEntries = {}
+/\ statements = {}
+/\ witnessCosigs = {}
+/\ verifiedBundles = {}
+/\ capsules = {}
+
+State 4: <WitnessCosign("w1",1,"root_A") line 88, col 3 to line 92, col 81 of module Mutant_INV_NoSplitViewWithWitnessQuorum>
+/\ checkpoints = { [treeSize |-> 1, root |-> "root_A", logSigned |-> TRUE],
+  [treeSize |-> 1, root |-> "root_B", logSigned |-> TRUE] }
+/\ logEntries = {}
+/\ statements = {}
+/\ witnessCosigs = {[treeSize |-> 1, root |-> "root_A", witness |-> "w1"]}
+/\ verifiedBundles = {}
+/\ capsules = {}
+
+State 5: <WitnessCosign("w2",1,"root_A") line 88, col 3 to line 92, col 81 of module Mutant_INV_NoSplitViewWithWitnessQuorum>
+/\ checkpoints = { [treeSize |-> 1, root |-> "root_A", logSigned |-> TRUE],
+  [treeSize |-> 1, root |-> "root_B", logSigned |-> TRUE] }
+/\ logEntries = {}
+/\ statements = {}
+/\ witnessCosigs = { [treeSize |-> 1, root |-> "root_A", witness |-> "w1"],
+  [treeSize |-> 1, root |-> "root_A", witness |-> "w2"] }
+/\ verifiedBundles = {}
+/\ capsules = {}
+
+State 6: <WitnessCosign("w3",1,"root_A") line 88, col 3 to line 92, col 81 of module Mutant_INV_NoSplitViewWithWitnessQuorum>
+/\ checkpoints = { [treeSize |-> 1, root |-> "root_A", logSigned |-> TRUE],
+  [treeSize |-> 1, root |-> "root_B", logSigned |-> TRUE] }
+/\ logEntries = {}
+/\ statements = {}
+/\ witnessCosigs = { [treeSize |-> 1, root |-> "root_A", witness |-> "w1"],
+  [treeSize |-> 1, root |-> "root_A", witness |-> "w2"],
+  [treeSize |-> 1, root |-> "root_A", witness |-> "w3"] }
+/\ verifiedBundles = {}
+/\ capsules = {}
+
+State 7: <WitnessCosign("w1",1,"root_B") line 88, col 3 to line 92, col 81 of module Mutant_INV_NoSplitViewWithWitnessQuorum>
+/\ checkpoints = { [treeSize |-> 1, root |-> "root_A", logSigned |-> TRUE],
+  [treeSize |-> 1, root |-> "root_B", logSigned |-> TRUE] }
+/\ logEntries = {}
+/\ statements = {}
+/\ witnessCosigs = { [treeSize |-> 1, root |-> "root_A", witness |-> "w1"],
+  [treeSize |-> 1, root |-> "root_A", witness |-> "w2"],
+  [treeSize |-> 1, root |-> "root_A", witness |-> "w3"],
+  [treeSize |-> 1, root |-> "root_B", witness |-> "w1"] }
+/\ verifiedBundles = {}
+/\ capsules = {}
+
+State 8: <WitnessCosign("w2",1,"root_B") line 88, col 3 to line 92, col 81 of module Mutant_INV_NoSplitViewWithWitnessQuorum>
+/\ checkpoints = { [treeSize |-> 1, root |-> "root_A", logSigned |-> TRUE],
+  [treeSize |-> 1, root |-> "root_B", logSigned |-> TRUE] }
+/\ logEntries = {}
+/\ statements = {}
+/\ witnessCosigs = { [treeSize |-> 1, root |-> "root_A", witness |-> "w1"],
+  [treeSize |-> 1, root |-> "root_A", witness |-> "w2"],
+  [treeSize |-> 1, root |-> "root_A", witness |-> "w3"],
+  [treeSize |-> 1, root |-> "root_B", witness |-> "w1"],
+  [treeSize |-> 1, root |-> "root_B", witness |-> "w2"] }
+/\ verifiedBundles = {}
+/\ capsules = {}
+
+State 9: <WitnessCosign("w3",1,"root_B") line 88, col 3 to line 92, col 81 of module Mutant_INV_NoSplitViewWithWitnessQuorum>
+/\ checkpoints = { [treeSize |-> 1, root |-> "root_A", logSigned |-> TRUE],
+  [treeSize |-> 1, root |-> "root_B", logSigned |-> TRUE] }
+/\ logEntries = {}
+/\ statements = {}
+/\ witnessCosigs = { [treeSize |-> 1, root |-> "root_A", witness |-> "w1"],
+  [treeSize |-> 1, root |-> "root_A", witness |-> "w2"],
+  [treeSize |-> 1, root |-> "root_A", witness |-> "w3"],
+  [treeSize |-> 1, root |-> "root_B", witness |-> "w1"],
+  [treeSize |-> 1, root |-> "root_B", witness |-> "w2"],
+  [treeSize |-> 1, root |-> "root_B", witness |-> "w3"] }
+/\ verifiedBundles = {}
+/\ capsules = {}
+
+1629124 states generated, 193334 distinct states found, 67757 states left on queue.
+The depth of the complete state graph search is 9.
+Finished in 08s at (2026-10-31 22:20:58)
+Trace exploration spec path: docs/receipts/mutants/Mutant_INV_NoSplitViewWithWitnessQuorum_TTrace_1793481650.tla

@@ -1,0 +1,7 @@
+; Criteria verdict registered by an evaluator
+verdict = {
+  profile: "urn:hivemind:receipts:criteria-verdict:1",
+  capsule_id: digest, criteria_ref: digest, verdict: bool,
+  confirmation_digests: [* digest], evaluated_at: tstr,
+}
+digest = tstr .regexp "sha256:[0-9a-f]{64}"

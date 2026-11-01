@@ -1,0 +1,115 @@
+{
+  "schema_version": "1.2.0",
+  "check_kind": "tlc_and_bounded_typescript_check",
+  "producer": "tlc2.TLC (/tmp/tla2tools.jar) + src/receipts/core/formal-model.ts",
+  "model": "HivemindReceipts",
+  "spec_file": "docs/receipts/HivemindReceipts.tla",
+  "config_file": "docs/receipts/HivemindReceipts.cfg",
+  "oss_spec_file": "receipts-spec/spec/HivemindReceipts.tla",
+  "oss_config_file": "receipts-spec/spec/HivemindReceipts.cfg",
+  "oss_tlc_output_file": "receipts-spec/spec/tlc-output.txt",
+  "spec_sha256": "ce3c005495b40fdcfc6c5f02cfcf87d2f341822d5d1f8b967164a158c75c4539",
+  "config_sha256": "cb5b67ec04c8d45b947312c2b467bde3c03d1fda5baff9860562099b7b746dfd",
+  "ok": true,
+  "states_generated": 1604359,
+  "distinct_states": 139191,
+  "diameter": 12,
+  "witness_quorum": "3-of-4 (3 honest, 1 Byzantine)",
+  "invariants_checked": [
+    "INV_NoUnsignedRegistered",
+    "INV_AnchoredRequiresVerifiedReceipt",
+    "INV_NoSplitViewWithWitnessQuorum",
+    "INV_ConfirmedEffectHasObservedDigest"
+  ],
+  "properties_checked": [
+    "PROP_NoUnsignedRegistered",
+    "PROP_AnchoredRequiresVerifiedReceipt",
+    "PROP_NoSplitViewWithWitnessQuorum",
+    "PROP_ConfirmedEffectHasObservedDigest"
+  ],
+  "tlc_model_checker_run": {
+    "tool": "TLC2 Version 2026.10.30.154139 (rev: 090e85c)",
+    "workers": 32,
+    "wall_time_seconds": 1,
+    "command": "/tmp/toolchains/jdk/bin/java -XX:+UseParallelGC -cp /tmp/tla2tools.jar tlc2.TLC -workers auto -cleanup -config docs/receipts/HivemindReceipts.cfg docs/receipts/HivemindReceipts.tla",
+    "spec_file": "docs/receipts/HivemindReceipts.tla",
+    "config_file": "docs/receipts/HivemindReceipts.cfg",
+    "constants": {
+      "CapsuleIds": ["c1"],
+      "Witnesses": ["w1", "w2", "w3", "w4"],
+      "HonestWitnesses": ["w1", "w2", "w3"],
+      "WitnessQuorum": 3
+    },
+    "states_generated": 1604359,
+    "distinct_states": 139191,
+    "states_left_on_queue": 0,
+    "depth": 12,
+    "duration_seconds": 1,
+    "exit_code": 0,
+    "raw_output_path": "docs/receipts/tlc-output.txt",
+    "oss_output_path": "receipts-spec/spec/tlc-output.txt",
+    "raw_output_sha256": "10ac449c14eb75352cc332659fb97b89addb13f1ff28d3f632fe7e5b08462d4e"
+  },
+  "tlc_mutant_verification": {
+    "all_caught": true,
+    "mutants": [
+      {
+        "property": "INV_NoUnsignedRegistered",
+        "spec_file": "receipts-spec/spec/mutants/Mutant_INV_NoUnsignedRegistered.tla",
+        "output_file": "receipts-spec/spec/mutants/Mutant_INV_NoUnsignedRegistered.out.txt",
+        "mutation": "AppendToLog (line 76): removed /\\ s.signedByTrustedIssuer = TRUE guard",
+        "tlc_exit_code": 12,
+        "counterexample_depth": 3,
+        "violated_invariant": "INV_NoUnsignedRegistered"
+      },
+      {
+        "property": "INV_AnchoredRequiresVerifiedReceipt",
+        "spec_file": "receipts-spec/spec/mutants/Mutant_INV_AnchoredRequiresVerifiedReceipt.tla",
+        "output_file": "receipts-spec/spec/mutants/Mutant_INV_AnchoredRequiresVerifiedReceipt.out.txt",
+        "mutation": "VerifyBundle (line 113): weakened cap.ledgerMode = \"anchored\" => hasReceipt = TRUE to hasReceipt \\in BOOLEAN",
+        "tlc_exit_code": 12,
+        "counterexample_depth": 3,
+        "violated_invariant": "INV_AnchoredRequiresVerifiedReceipt"
+      },
+      {
+        "property": "INV_NoSplitViewWithWitnessQuorum",
+        "spec_file": "receipts-spec/spec/mutants/Mutant_INV_NoSplitViewWithWitnessQuorum.tla",
+        "output_file": "receipts-spec/spec/mutants/Mutant_INV_NoSplitViewWithWitnessQuorum.out.txt",
+        "mutation": "WitnessCosign (line 90): replaced honest-witness non-equivocation check with TRUE",
+        "tlc_exit_code": 12,
+        "counterexample_depth": 9,
+        "violated_invariant": "INV_NoSplitViewWithWitnessQuorum"
+      },
+      {
+        "property": "INV_ConfirmedEffectHasObservedDigest",
+        "spec_file": "receipts-spec/spec/mutants/Mutant_INV_ConfirmedEffectHasObservedDigest.tla",
+        "output_file": "receipts-spec/spec/mutants/Mutant_INV_ConfirmedEffectHasObservedDigest.out.txt",
+        "mutation": "ValidCapsuleSemantics (line 47): removed /\\ hasRespDigest = TRUE requirement from effectStatus = \"confirmed\"",
+        "tlc_exit_code": 12,
+        "counterexample_depth": 2,
+        "violated_invariant": "INV_ConfirmedEffectHasObservedDigest"
+      }
+    ]
+  },
+  "bounded_typescript_check": {
+    "producer": "src/receipts/core/formal-model.ts",
+    "ok": true,
+    "distinct_states": 688,
+    "transitions_explored": 2245,
+    "diameter": 9,
+    "witness_quorum": "3-of-5",
+    "invariants_checked": [
+      "INV_NoUnsignedRegistered",
+      "INV_AnchoredRequiresVerifiedReceipt",
+      "INV_NoSplitViewWithWitnessQuorum",
+      "INV_ConfirmedEffectHasObservedDigest"
+    ]
+  },
+  "fault_injection_verified": {
+    "unsigned_statement_rejected": true,
+    "unanchored_claim_rejected": true,
+    "split_view_detected": true,
+    "unconfirmed_effect_rejected": true
+  },
+  "transcript_sha256": "10ac449c14eb75352cc332659fb97b89addb13f1ff28d3f632fe7e5b08462d4e"
+}

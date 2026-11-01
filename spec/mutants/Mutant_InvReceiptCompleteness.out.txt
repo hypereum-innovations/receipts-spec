@@ -1,0 +1,70 @@
+TLC2 Version 2026.10.30.154139 (rev: 090e85c)
+Running breadth-first search Model-Checking with fp 15 and seed -3265902203280142624 with 1 worker on 32 cores with 13840MB heap and 64MB offheap memory [pid: 3053399] (Linux 7.0.0-38-generic amd64, Eclipse Adoptium 21.0.13 64bit, MSBDiskFPSet, DiskStateQueue).
+Parsing file /home/giovi/Code/Hivemind/docs/receipts/mutants/Mutant_InvReceiptCompleteness.tla
+Parsing file /tmp/tlc-6018914377671853236/Naturals.tla (jar:file:/tmp/tla2tools.jar!/tla2sany/StandardModules/Naturals.tla)
+Parsing file /tmp/tlc-6018914377671853236/Sequences.tla (jar:file:/tmp/tla2tools.jar!/tla2sany/StandardModules/Sequences.tla)
+Parsing file /tmp/tlc-6018914377671853236/FiniteSets.tla (jar:file:/tmp/tla2tools.jar!/tla2sany/StandardModules/FiniteSets.tla)
+Parsing file /tmp/tlc-6018914377671853236/TLC.tla (jar:file:/tmp/tla2tools.jar!/tla2sany/StandardModules/TLC.tla)
+Parsing file /tmp/tlc-6018914377671853236/_TLCTrace.tla (jar:file:/tmp/tla2tools.jar!/tla2sany/StandardModules/_TLCTrace.tla)
+Parsing file /tmp/tlc-6018914377671853236/TLCExt.tla (jar:file:/tmp/tla2tools.jar!/tla2sany/StandardModules/TLCExt.tla)
+Parsing file /tmp/tlc-6018914377671853236/Integers.tla (jar:file:/tmp/tla2tools.jar!/tla2sany/StandardModules/Integers.tla)
+Semantic processing of module Naturals
+Semantic processing of module Sequences
+Semantic processing of module FiniteSets
+Semantic processing of module TLC
+Semantic processing of module Integers
+Semantic processing of module TLCExt
+Semantic processing of module _TLCTrace
+Semantic processing of module Mutant_InvReceiptCompleteness
+Linting of module TLCExt
+Linting of module _TLCTrace
+Linting of module Mutant_InvReceiptCompleteness
+Starting... (2026-10-31 22:21:08)
+Computing initial states...
+Finished computing initial states: 1 distinct state generated at 2026-10-31 22:21:09.
+Error: Invariant INV_AnchoredRequiresVerifiedReceipt is violated.
+Error: The behavior up to this point is:
+State 1: <Initial predicate>
+/\ checkpoints = {}
+/\ logEntries = {}
+/\ statements = {}
+/\ witnessCosigs = {}
+/\ verifiedBundles = {}
+/\ capsules = {}
+
+State 2: <IssueCapsule("c1","executed","asserted",FALSE,"anchored",TRUE) line 61, col 3 to line 72, col 77 of module Mutant_InvReceiptCompleteness>
+/\ checkpoints = {}
+/\ logEntries = {}
+/\ statements = {[cid |-> "c1", signedByTrustedIssuer |-> TRUE]}
+/\ witnessCosigs = {}
+/\ verifiedBundles = {}
+/\ capsules = { [ verdict |-> "executed",
+    effectStatus |-> "asserted",
+    hasRespDigest |-> FALSE,
+    cid |-> "c1",
+    ledgerMode |-> "anchored" ] }
+
+State 3: <VerifyBundle("c1",FALSE,1,"root_A") line 103, col 3 to line 125, col 79 of module Mutant_InvReceiptCompleteness>
+/\ checkpoints = {}
+/\ logEntries = {}
+/\ statements = {[cid |-> "c1", signedByTrustedIssuer |-> TRUE]}
+/\ witnessCosigs = {}
+/\ verifiedBundles = { [ verdict |-> "executed",
+    effectStatus |-> "asserted",
+    hasRespDigest |-> FALSE,
+    cid |-> "c1",
+    ledgerMode |-> "anchored",
+    signedByTrustedIssuer |-> TRUE,
+    treeSize |-> 1,
+    root |-> "root_A",
+    receiptVerified |-> FALSE ] }
+/\ capsules = { [ verdict |-> "executed",
+    effectStatus |-> "asserted",
+    hasRespDigest |-> FALSE,
+    cid |-> "c1",
+    ledgerMode |-> "anchored" ] }
+
+608 states generated, 608 distinct states found, 480 states left on queue.
+The depth of the complete state graph search is 3.
+Finished in 00s at (2026-10-31 22:21:09)
+Trace exploration spec path: docs/receipts/mutants/Mutant_InvReceiptCompleteness_TTrace_1793481668.tla

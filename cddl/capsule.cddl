@@ -1,0 +1,48 @@
+; Agent Action Capsule - urn:hivemind:receipts:capsule:1
+capsule = {
+  profile: "urn:hivemind:receipts:capsule:1",
+  capsule_id: digest,
+  action_id: tstr .regexp "[0-9A-HJKMNP-TV-Z]{26}",
+  ? retry_of: tstr,
+  agent: { ? spiffe_id: tstr, ? agent_card_digest: digest, ? key_thumbprint: tstr },
+  principal: {
+    subject_commitment: digest,
+    ? delegation_chain_digest: digest,
+    ? token_issuer: tstr,
+    ? token_scopes: [* tstr],
+  },
+  operation: {
+    kind: "mcp" / "a2a" / "http" / "tool" / "other",
+    method: tstr,
+    ? target_commitment: digest,
+    ? tool_schema_digest: digest,
+    risk_tier: "read" / "write" / "destructive" / "financial" / "external_communication",
+  },
+  request_digest: digest,
+  verdict_class: "executed" / "blocked" / "denied" / "errored" / "engine_failure" / "timed_out",
+  ? effect: {
+    status: "confirmed" / "asserted" / "none",
+    ? response_digest: digest,
+    ? summary_commitment: digest,
+  },
+  disposition: {
+    ? authority: tstr, ? decision_digest: digest,
+    ? approval_digest: digest, ? break_glass: bool,
+  },
+  ? criteria_ref: digest,
+  ? model: { ? provider: tstr, ? model_id: tstr, ? model_version: tstr,
+             ? region: tstr, ? provider_request_id: tstr },
+  ? runtime: { ? image_digest: digest, ? attestation_ref: tstr },
+  causality: {
+    ? parent_capsule_ids: [* digest], ? dag_root: digest,
+    ? trace_id: tstr, ? span_id: tstr, ? a2a_task_id: tstr, ? mcp_request_id: tstr,
+  },
+  assurance: {
+    ledger_mode: "standalone" / "chained" / "anchored",
+    attestation_mode: "none" / "nitro" / "sev-snp" / "tdx" / "gpu",
+  },
+  privacy: { disclosure_policy_id: tstr, salt_commitment: digest },
+  issued_at: tstr,
+  ? extensions: { * tstr => any },
+}
+digest = tstr .regexp "sha256:[0-9a-f]{64}"

@@ -1,0 +1,62 @@
+TLC2 Version 2026.10.30.154139 (rev: 090e85c)
+Running breadth-first search Model-Checking with fp 63 and seed 9011967358260330232 with 1 worker on 32 cores with 13840MB heap and 64MB offheap memory [pid: 3053369] (Linux 7.0.0-38-generic amd64, Eclipse Adoptium 21.0.13 64bit, MSBDiskFPSet, DiskStateQueue).
+Parsing file /home/giovi/Code/Hivemind/docs/receipts/mutants/Mutant_InvNoSilentGap.tla
+Parsing file /tmp/tlc-7430340785475403994/Naturals.tla (jar:file:/tmp/tla2tools.jar!/tla2sany/StandardModules/Naturals.tla)
+Parsing file /tmp/tlc-7430340785475403994/Sequences.tla (jar:file:/tmp/tla2tools.jar!/tla2sany/StandardModules/Sequences.tla)
+Parsing file /tmp/tlc-7430340785475403994/FiniteSets.tla (jar:file:/tmp/tla2tools.jar!/tla2sany/StandardModules/FiniteSets.tla)
+Parsing file /tmp/tlc-7430340785475403994/TLC.tla (jar:file:/tmp/tla2tools.jar!/tla2sany/StandardModules/TLC.tla)
+Parsing file /tmp/tlc-7430340785475403994/_TLCTrace.tla (jar:file:/tmp/tla2tools.jar!/tla2sany/StandardModules/_TLCTrace.tla)
+Parsing file /tmp/tlc-7430340785475403994/TLCExt.tla (jar:file:/tmp/tla2tools.jar!/tla2sany/StandardModules/TLCExt.tla)
+Parsing file /tmp/tlc-7430340785475403994/Integers.tla (jar:file:/tmp/tla2tools.jar!/tla2sany/StandardModules/Integers.tla)
+Semantic processing of module Naturals
+Semantic processing of module Sequences
+Semantic processing of module FiniteSets
+Semantic processing of module TLC
+Semantic processing of module Integers
+Semantic processing of module TLCExt
+Semantic processing of module _TLCTrace
+Semantic processing of module Mutant_InvNoSilentGap
+Linting of module TLCExt
+Linting of module _TLCTrace
+Linting of module Mutant_InvNoSilentGap
+Starting... (2026-10-31 22:21:08)
+Computing initial states...
+Finished computing initial states: 1 distinct state generated at 2026-10-31 22:21:08.
+Error: Invariant INV_NoUnsignedRegistered is violated.
+Error: The behavior up to this point is:
+State 1: <Initial predicate>
+/\ checkpoints = {}
+/\ logEntries = {}
+/\ statements = {}
+/\ witnessCosigs = {}
+/\ verifiedBundles = {}
+/\ capsules = {}
+
+State 2: <IssueCapsule("c1","executed","asserted",FALSE,"standalone",FALSE) line 61, col 3 to line 72, col 77 of module Mutant_InvNoSilentGap>
+/\ checkpoints = {}
+/\ logEntries = {}
+/\ statements = {[cid |-> "c1", signedByTrustedIssuer |-> FALSE]}
+/\ witnessCosigs = {}
+/\ verifiedBundles = {}
+/\ capsules = { [ verdict |-> "executed",
+    effectStatus |-> "asserted",
+    hasRespDigest |-> FALSE,
+    cid |-> "c1",
+    ledgerMode |-> "standalone" ] }
+
+State 3: <AppendToLog("c1",1,"root_A") line 76, col 3 to line 79, col 71 of module Mutant_InvNoSilentGap>
+/\ checkpoints = {[treeSize |-> 1, root |-> "root_A", logSigned |-> TRUE]}
+/\ logEntries = {[cid |-> "c1", treeSize |-> 1, root |-> "root_A"]}
+/\ statements = {[cid |-> "c1", signedByTrustedIssuer |-> FALSE]}
+/\ witnessCosigs = {}
+/\ verifiedBundles = {}
+/\ capsules = { [ verdict |-> "executed",
+    effectStatus |-> "asserted",
+    hasRespDigest |-> FALSE,
+    cid |-> "c1",
+    ledgerMode |-> "standalone" ] }
+
+154 states generated, 154 distinct states found, 151 states left on queue.
+The depth of the complete state graph search is 3.
+Finished in 00s at (2026-10-31 22:21:08)
+Trace exploration spec path: docs/receipts/mutants/Mutant_InvNoSilentGap_TTrace_1793481668.tla

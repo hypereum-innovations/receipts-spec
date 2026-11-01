@@ -1,0 +1,10 @@
+; Verifier-network opinion (labelled opinion, never a confirmation)
+opinion = {
+  profile: "urn:hivemind:receipts:opinion:1",
+  capsule_id: digest,
+  opinion: "supports" / "disputes" / "abstains",
+  method_digest: digest,
+  judge: { kind: "human" / "service" / "ai", ? model_id: tstr, ? model_version: tstr },
+  ? rationale_commitment: digest,
+}
+digest = tstr .regexp "sha256:[0-9a-f]{64}"

@@ -1,0 +1,87 @@
+IANA Media Type Registration Template (RFC 6838)
+================================================
+
+Type name:
+  application
+
+Subtype name:
+  vnd.hivemind.receipt+cose
+
+Required parameters:
+  N/A
+
+Optional parameters:
+  profile
+    Identifies the capsule schema profile URI carried by the statement.
+    Default value: "urn:hivemind:receipts:capsule:1".
+  version
+    Integer profile version indicator (default "1").
+
+Encoding considerations:
+  binary
+  Payloads are deterministic CBOR (RFC 8949 Section 4.2) wrapped in a tagged
+  COSE_Sign1 (RFC 9052, CBOR Tag 18) structure carrying an embedded or
+  detached Agent Action Capsule and one or more RFC 9942 COSE inclusion
+  receipts in unprotected header parameter 394.
+
+Security considerations:
+  1. Active Content: This media type carries passive cryptographic data
+     structures (CBOR/COSE) and contains no executable code or scripts.
+  2. Deterministic CBOR Parsing: Parsers MUST enforce strict RFC 8949 Section
+     4.2 Core Deterministic Encoding rules (rejecting indefinite-length items,
+     non-shortest integer encodings, duplicate map keys, and trailing bytes)
+     and MUST bound allocation sizes prior to buffer reservation to prevent
+     denial-of-service (OOM) attacks.
+  3. Signature & Inclusion Verification: Relying parties MUST NOT trust the
+     contents of an `.hvr` receipt based solely on syntactic parsing. Class-1
+     offline verifiers MUST verify:
+     (a) the issuer's COSE_Sign1 signature (ES256, Ed25519, or ML-DSA-65)
+         against a pinned or transparency-anchored trust root;
+     (b) the RFC 9942 inclusion receipt (VDS=1, RFC 9162 SHA-256 Merkle tree)
+         against a C2SP signed-note checkpoint; and
+     (c) the witness cosignature quorum (minimum 3-of-5 independent witnesses
+         in production) to prevent split-view equivocation attacks.
+  4. Privacy & Off-Log Commitments: Sensitive attributes (principal subject,
+     target URI, request/response bodies) are represented as 256-bit salted
+     HMAC-SHA-256 commitments (`HMAC-SHA-256(salt_32, field || 0x00 || cbor)`).
+     Selective disclosures MUST be verified in constant time.
+
+Interoperability considerations:
+  Conforms to RFC 8949 (CBOR), RFC 9052 (COSE), RFC 9597 (CWT Claims in COSE),
+  RFC 9942 (COSE Receipts for Verifiable Data Structures), RFC 9964 (ML-DSA in
+  COSE), and IETF SCITT Transparent Statements.
+
+Published specification:
+  draft-hypereum-scitt-agent-action-00 ("SCITT Agent Action Receipts and
+  Transparent Capsule Profile")
+
+Applications that use this media type:
+  AI agent gateways (MCP, A2A, Envoy ext_authz), OpenTelemetry Collectors,
+  CI/CD provenance verifiers, Git pre-commit hooks, browser verification
+  extensions, and eIDAS/regulatory audit verification tools.
+
+Fragment identifier considerations:
+  Followed by CBOR/COSE structured syntax suffix (+cose) conventions.
+
+Additional information:
+  Deprecated alias names for this type: N/A
+  Magic number(s):
+    Hex: d2 84 (CBOR Tag 18 `0xd2` followed by 4-element array `0x84`)
+  File extension(s):
+    .hvr
+  Macintosh file type code(s):
+    N/A
+  Object Identifiers:
+    2.16.840.1.101.3.4.3.18 (NIST id-ml-dsa-65 when hybrid PQ countersigned)
+
+Person & email address to contact for further information:
+  Hypereum Security Architecture Team <security@hypereum.tech>
+
+Intended usage:
+  COMMON
+
+Restrictions on usage:
+  None
+
+Author / Change controller:
+  Hypereum Ltd <security@hypereum.tech>

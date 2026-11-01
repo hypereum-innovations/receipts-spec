@@ -1,0 +1,14 @@
+; Outcome confirmation - urn:hivemind:receipts:confirmation:1
+confirmation = {
+  profile: "urn:hivemind:receipts:confirmation:1",
+  capsule_id: digest,
+  source: { system: tstr, ? account_commitment: digest },
+  observation: {
+    event: tstr, ? object_id: tstr, state: tstr, at: tstr,
+    ? fields: { * tstr => tstr / int / bool },
+  },
+  evidence: { kind: tstr, "digest": digest, ? detail: tstr },
+  level: "W0" / "W1" / "W2" / "W3",
+  witness: tstr,
+}
+digest = tstr .regexp "sha256:[0-9a-f]{64}"
